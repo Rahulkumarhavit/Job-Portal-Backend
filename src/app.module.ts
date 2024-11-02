@@ -12,17 +12,18 @@ import { ApplicationModule } from './application/application.module';
 import { ApplicationService } from './application/application.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
   imports: [
-    PassportModule.register({defaultStrategy:"jwt"}),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
-      imports:[ConfigModule],
-      useFactory:async (configService:ConfigService)=>({
-        secret:configService.get<string>('SECRET_KEY'),
-        signOptions:{expiresIn:'1d'}
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('SECRET_KEY'),
+        signOptions: { expiresIn: '1d' },
       }),
-      inject:[ConfigService],
+      inject: [ConfigService],
     }),
 
     ConfigModule,
@@ -32,6 +33,12 @@ import { JwtModule } from '@nestjs/jwt';
     ApplicationModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, UserService, ApplicationService],
+  providers: [
+    AppService,
+    PrismaService,
+    JwtStrategy,
+    UserService,
+    ApplicationService,
+  ],
 })
 export class AppModule {}
