@@ -72,8 +72,17 @@ export class UserController {
   ) {
     try {
       const userId = req.user.id;
-      const result = this.userService.updateProfile(userId,updateUserDto);
-      console.log('userId', userId);
-    } catch (error) {}
+      const result = await this.userService.updateProfile(userId, updateUserDto);
+      return res.status(200).json({
+        message: 'user profile update successfully',
+        result,
+        success: true,
+      });
+    } catch (error) {
+      return res.status(error.status || 500).json({
+        message: error.message || 'Internal server error',
+        success: false,
+      });
+    }
   }
 }
