@@ -20,11 +20,11 @@ export class RegisterCompanyDto {
   website?: string;
 
   @IsOptional()
-  @isString()
+  @IsString()
   location?: string;
 
   @IsOptional()
-  @isString()
+  @IsString()
   logo?: string;
 }
 
@@ -42,10 +42,10 @@ export class UpdateCompanyDto {
   website?: string;
 
   @IsOptional()
-  @isString()
+  @IsString()
   location?: string;
 
   @IsOptional()
-  @isString()
+  @IsString()
   logo?: string;
 }
