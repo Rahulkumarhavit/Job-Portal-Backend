@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RegisterCompanyDto } from './dto/company.dto';
@@ -25,4 +25,39 @@ export class CompanyController {
         success:true,
     }
   }
+
+  // get companies
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getcompanies(@Req() req:any){
+    const  userId = req.user.id;
+    const result = await this.companyService.getcompanies(userId);
+    return {
+      result,
+      success:true,
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async getcompaniesbyid(@Req() req:any,@Param('id') id:string){
+  
+    const result = await this.companyService.getcompaniesbyid(id);
+    return {
+      result,
+      success:true,
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async deletecompanies(@Req() req:any,@Param('id') id:string){
+  
+    const result = await this.companyService.deletecompanies(id);
+    return {
+      result,
+      success:true,
+    }
+  }
+
 }
