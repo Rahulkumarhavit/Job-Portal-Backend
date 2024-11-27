@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { RegisterCompanyDto } from './dto/company.dto';
+import { RegisterCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 
 @Injectable()
 export class CompanyService {
@@ -64,6 +64,24 @@ export class CompanyService {
       throw new NotFoundException('company not deleted');
     }
 
+    return company;
+  }
+
+  async updatecompanies(companyId: string, updateCompanyDto: UpdateCompanyDto) {
+    // const data = await this.prisma.company.findUnique({
+    //   where:{id:companyId}
+    // });
+    // if(data.name == updateCompanyDto.name){
+    //   throw 
+    // }
+    const company = await this.prisma.company.update({
+      where: { id: companyId },
+      data: updateCompanyDto,
+    });
+
+    if (!company) {
+      throw new NotFoundException('company not found');
+    }
     return company;
   }
 }
