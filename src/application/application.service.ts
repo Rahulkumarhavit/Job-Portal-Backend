@@ -1,5 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { UpdateStatusDto } from './dto/application.dto';
 
 @Injectable()
 export class ApplicationService {
@@ -31,5 +36,58 @@ export class ApplicationService {
       },
     });
     return newApplication;
+  }
+
+  async getAppliedJobs(userId: string) {
+    const application = await this.prisma.application.findMany({
+      where: { applicantId: userId },
+      orderBy: { createAt: 'desc' },
+      include: { job: { include: { company: true } } },
+    });
+
+    if (!application || application?.length === 0) {
+      throw new NotFoundException('no application found');
+    }
+    return application;
+  }
+
+  //get all aplicants by job
+  async getApplicants(jobId: string) {
+    const job = await this.prisma.job.findUnique({
+      where: { id: jobId },
+      include: {
+        applications: {
+          orderBy: { createAt: 'desc' },
+          include: {
+            applicant: true,
+          },
+        },
+      },
+    });
+
+    if (!job) {
+      throw new NotFoundException('job not found');
+    }
+    return job;
+  }
+
+  // update status
+  async updateStatus(id: string, updateStatusDto: UpdateStatusDto) {
+    const { status } = updateStatusDto;
+
+    const application = await this.prisma.application.findUnique({
+      where: { id },
+    });
+
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+    const updatedApplication = await this.prisma.application.update({
+      where: { id },
+      data: {
+        status: status?.toLowerCase(),
+      },
+    });
+    return updatedApplication;
   }
 }
